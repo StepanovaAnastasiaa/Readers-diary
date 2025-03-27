@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+
+    </RelativeLayout>
+        <!-- Блок обложки слева -->
+        <LinearLayout
+            android:id="@+id/coverContainer"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical">
+
+            <!-- Контейнер для изображения обложки -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:foreground="?attr/selectableItemBackground">
+
+                <!-- Градиентный фон для обложки -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/book_cover_gradient"/>
+
+                <!-- Сама обложка книги -->
+                <ImageView
+                    android:id="@+id/ivBookCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="invisible"/>
+            </FrameLayout>
+
+            <!-- Кнопка добавления обложки -->
+            <Button
+                android:id="@+id/btnAddCover"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Добавить обложку"
+                android:backgroundTint="#5081E2"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+
+        <!-- Блок информации справа от обложки -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/coverContainer"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <!-- Название книги -->
+            <TextView
+                android:id="@+id/tvBookTitle"
+                android:layout_width="match_parent"
+                android:layout_height="39dp"
+                android:layout_marginBottom="4dp"
+                android:text="Название книги"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- Автор книги -->
+            <TextView
+                android:id="@+id/tvBookAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:layout_marginBottom="16dp"
+                android:text="Автор: Иван Иванов"
+                android:textSize="16sp" />
+
+            <!-- Общее количество страниц -->
+            <TextView
+                android:id="@+id/tvTotalPages"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginBottom="8dp"
+                android:text="Всего страниц: 300"
+                android:textSize="16sp" />
+
+            <!-- Оставшееся количество страниц -->
+            <TextView
+                android:id="@+id/tvPagesLeft"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginBottom="16dp"
+                android:text="Осталось: 150 страниц"
+                android:textSize="16sp" />
+
+            <!-- Поле для ввода прочитанных страниц -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Прочитано:"/>
+
+                <EditText
+                    android:id="@+id/etPagesRead"
+                    android:layout_width="72dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:imeOptions="actionDone"
+                    android:inputType="number" />
+
+                <!-- Кнопка сохранения с иконкой -->
+                <ImageButton
+                    android:id="@+id/btnSaveProgress"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_check"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Сохранить"
+                    android:tint="#5081E2"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Прогресс-бар во всю ширину экрана -->
+        <ProgressBar
+            android:id="@+id/progressBarReading"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="379dp"
+            android:layout_height="54dp"
+            android:layout_below="@id/coverContainer"
+            android:layout_marginTop="13dp"
+            android:progress="50" />
+
+        <!-- Кнопка добавления краткого содержания -->
+
+        <!-- Поле для краткого содержания -->
+
+        <Button
+            android:id="@+id/btnAddSummary"
+            android:layout_width="395dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progressBarReading"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="0dp"
+            android:backgroundTint="#5081E2"
+            android:enabled="false"
+            android:text="Добавить краткое содержание"
+            android:textColor="@android:color/white" />
+
+        <LinearLayout
+            android:id="@+id/summaryContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnAddSummary"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Краткое содержание:"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/etBookSummary"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="8dp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:minLines="5"
+                android:background="@android:drawable/editbox_background"/>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="21dp"
+            android:layout_marginBottom="25dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Назад"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="#5081E2" />
+    </RelativeLayout>
+</ScrollView>
