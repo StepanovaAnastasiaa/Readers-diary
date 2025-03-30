@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomMenu"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Статистика чтения"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:id="@+id/TotalBooks"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Книг: 0" />
+
+            <TextView
+                android:id="@+id/TotalPages"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Страниц: 0" />
+
+            <TextView
+                android:id="@+id/AveragePages"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="В среднем за день: 0"
+                android:gravity="center"
+                android:padding="8dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Выберите период"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="С:"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="8dp"/>
+
+            <EditText
+                android:id="@+id/PerStartDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Начальная дата"
+                android:inputType="date"
+                android:focusable="false"
+                android:clickable="true"
+                android:padding="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="По:"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"/>
+
+            <EditText
+                android:id="@+id/PerEndDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Конечная дата"
+                android:inputType="date"
+                android:focusable="false"
+                android:clickable="true"
+                android:padding="8dp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/buttonSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Поиск"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#5081E2"
+            android:textColor="@android:color/white"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp">
+
+            <TableLayout
+                android:id="@+id/tableStatistics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+
+                <TableRow>
+                    <TextView
+                        android:text="Дата"
+                        android:padding="8dp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:text="Страницы"
+                        android:padding="8dp"
+                        android:textStyle="bold"/>
+                </TableRow>
+
+            </TableLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="#ffffff"
+        android:elevation="8dp">
+
+        <Button
+            android:id="@+id/buttonListBooks"
+            android:layout_width="8dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Список книг"
+            android:backgroundTint="#5081E2"
+            android:textColor="@android:color/white"
+            android:drawableTop="@drawable/ic_book_list"
+            android:drawablePadding="4dp"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/buttonStatistics"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Статистика"
+            android:backgroundTint="#5081E2"
+            android:textColor="@android:color/white"
+            android:drawableTop="@drawable/ic_statistic"
+            android:drawablePadding="4dp"
+            android:padding="8dp" />
+    </LinearLayout>
+</RelativeLayout>

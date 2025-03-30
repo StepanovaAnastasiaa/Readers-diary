@@ -10,19 +10,24 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp">
+        <!-- Кнопка назад -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Назад"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="#5081E2" />
 
-    </RelativeLayout>
         <!-- Блок обложки слева -->
         <LinearLayout
             android:id="@+id/coverContainer"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/btnBack"
+            android:layout_marginTop="16dp"
             android:orientation="vertical">
 
             <!-- Контейнер для изображения обложки -->
@@ -61,6 +66,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/btnBack"
             android:layout_toEndOf="@id/coverContainer"
             android:layout_marginStart="16dp"
             android:orientation="vertical">
@@ -69,7 +75,7 @@
             <TextView
                 android:id="@+id/tvBookTitle"
                 android:layout_width="match_parent"
-                android:layout_height="39dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:text="Название книги"
                 android:textSize="20sp"
@@ -79,7 +85,7 @@
             <TextView
                 android:id="@+id/tvBookAuthor"
                 android:layout_width="match_parent"
-                android:layout_height="37dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="Автор: Иван Иванов"
                 android:textSize="16sp" />
@@ -88,7 +94,7 @@
             <TextView
                 android:id="@+id/tvTotalPages"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="Всего страниц: 300"
                 android:textSize="16sp" />
@@ -97,10 +103,26 @@
             <TextView
                 android:id="@+id/tvPagesLeft"
                 android:layout_width="match_parent"
-                android:layout_height="43dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="Осталось: 150 страниц"
                 android:textSize="16sp" />
+
+            <!-- Выпадающее меню статуса -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <AutoCompleteTextView
+                    android:id="@+id/statusDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="37dp"
+                    android:contentDescription="Выберите статус книги"
+                    android:hint="Статус книги"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Поле для ввода прочитанных страниц -->
             <LinearLayout
@@ -131,7 +153,7 @@
                     android:src="@drawable/ic_check"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Сохранить"
-                    android:tint="#5081E2"/>
+                    app:tint="#5081E2" />
             </LinearLayout>
         </LinearLayout>
 
@@ -139,29 +161,25 @@
         <ProgressBar
             android:id="@+id/progressBarReading"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="379dp"
-            android:layout_height="54dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/coverContainer"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="16dp"
             android:progress="50" />
 
         <!-- Кнопка добавления краткого содержания -->
-
-        <!-- Поле для краткого содержания -->
-
         <Button
             android:id="@+id/btnAddSummary"
-            android:layout_width="395dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/progressBarReading"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="19dp"
-            android:layout_marginEnd="0dp"
+            android:layout_marginTop="16dp"
             android:backgroundTint="#5081E2"
             android:enabled="false"
             android:text="Добавить краткое содержание"
             android:textColor="@android:color/white" />
 
+        <!-- Поле для краткого содержания -->
         <LinearLayout
             android:id="@+id/summaryContainer"
             android:layout_width="match_parent"
@@ -188,18 +206,5 @@
                 android:minLines="5"
                 android:background="@android:drawable/editbox_background"/>
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="21dp"
-            android:layout_marginBottom="25dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Назад"
-            android:src="@drawable/ic_arrow_back"
-            android:tint="#5081E2" />
     </RelativeLayout>
 </ScrollView>

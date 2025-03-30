@@ -13,6 +13,7 @@
         android:theme="@style/Theme.Readersdiary"
         tools:targetApi="31">
         <activity
+
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Readersdiary">
@@ -22,6 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
