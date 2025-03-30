@@ -11,8 +11,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import com.example.readers_diary.databinding.ActivityMainBinding
+import android.widget.ImageButton
+import android.content.Intent
 
-class AddBookActivity(){}
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +21,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
        setContentView(R.layout.activity_main)
+
+        val buttonAddBook = findViewById<ImageButton>(R.id.buttonAddBook)
+        buttonAddBook.setOnClickListener {
+            // Создаем Intent для перехода на AddBookActivity
+            val intent = Intent(this, AddBookActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        }
     }
 
 
