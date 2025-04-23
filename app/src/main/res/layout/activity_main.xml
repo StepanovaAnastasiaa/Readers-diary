@@ -59,6 +59,19 @@
             android:contentDescription="Показать запланированные книги" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Нет книг для отображения"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:drawableTop="@drawable/ic_book_empty"
+        android:drawablePadding="8dp"
+        android:contentDescription="Нет книг для отображения" />
+
     <!-- Список книг -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewBooks"
@@ -71,7 +84,6 @@
         android:importantForAccessibility="no"
         tools:ignore="SpeakableTextPresentCheck"
         tools:listitem="@layout/item_book" />
-
     <!-- Нижнее меню -->
     <LinearLayout
         android:id="@+id/bottomMenu"
