@@ -5,13 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.RatingBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,9 +17,9 @@ import com.example.readerdiary.Book
 import com.google.android.material.snackbar.Snackbar
 import com.example.readerdiary.BookStatus
 
-
 class MainActivity : AppCompatActivity() {
 
+    // UI элементы
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: BookAdapter
     private lateinit var searchEditText: EditText
@@ -32,14 +29,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonAddBook: ImageButton
     private lateinit var buttonListBooks: Button
     private lateinit var buttonStatistics: Button
+    private lateinit var textEmptyState: TextView
 
+    // Данные
     private var bookList = mutableListOf<Book>()
     private var filteredList = mutableListOf<Book>()
     private var currentFilter = BookFilter.ALL
+    private lateinit var bookRepository: BookRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Инициализация репозитория для хранения книг
+        bookRepository = BookRepositoryImpl(this)
 
         initViews()
         setupRecyclerView()
@@ -47,7 +50,14 @@ class MainActivity : AppCompatActivity() {
         setupListeners()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Обновляем данные при возвращении на экран
+        loadBooks()
+    }
+
     private fun initViews() {
+        // Находим все View элементы
         recyclerView = findViewById(R.id.recyclerViewBooks)
         searchEditText = findViewById(R.id.editTextSearch)
         buttonRead = findViewById(R.id.buttonRead)
@@ -56,9 +66,11 @@ class MainActivity : AppCompatActivity() {
         buttonAddBook = findViewById(R.id.buttonAddBook)
         buttonListBooks = findViewById(R.id.buttonListBooks)
         buttonStatistics = findViewById(R.id.buttonStatistics)
+        textEmptyState = findViewById(R.id.textEmptyState)
     }
 
     private fun setupRecyclerView() {
+        // Настраиваем RecyclerView и адаптер
         adapter = BookAdapter(filteredList) { book ->
             openBookDetails(book)
         }
@@ -67,12 +79,55 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadBooks() {
-        // Здесь должна быть загрузка из SharedPreferences/файлов
+        // Загружаем книги из хранилища
+        bookList.clear()
+        bookList.addAll(bookRepository.loadBooks())
+
+        // Если список пуст, добавляем примеры книг (для тестирования)
+        if (bookList.isEmpty()) {
+            bookList.addAll(getSampleBooks())
+            bookRepository.saveBooks(bookList)
+            Snackbar.make(recyclerView, "Добавлены примеры книг", Snackbar.LENGTH_SHORT).show()
+        }
 
         filterBooks(currentFilter)
     }
 
+    private fun getSampleBooks(): List<Book> {
+        // Создаем несколько книг для примера
+        return listOf(
+            Book(
+                title = "Война и мир",
+                author = "Лев Толстой",
+                totalPages = 1225,
+                readPages = 300,
+                status = BookStatus.READING,
+                rating = 4.5f,
+                summary = "Роман-эпопея о русском обществе во время войн с Наполеоном"
+            ),
+            Book(
+                title = "1984",
+                author = "Джордж Оруэлл",
+                totalPages = 328,
+                readPages = 328,
+                status = BookStatus.FINISHED,
+                rating = 5f,
+                summary = "Классическая антиутопия о тоталитарном обществе"
+            ),
+            Book(
+                title = "Гарри Поттер и философский камень",
+                author = "Дж. К. Роулинг",
+                totalPages = 400,
+                readPages = 0,
+                status = BookStatus.PLANNED,
+                rating = 0f,
+                summary = "Первая книга о юном волшебнике Гарри Поттере"
+            )
+        )
+    }
+
     private fun setupListeners() {
+        // Поиск книг при изменении текста
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -81,21 +136,35 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        buttonRead.setOnClickListener { filterBooks(BookFilter.FINISHED) }
-        buttonInProcess.setOnClickListener { filterBooks(BookFilter.READING) }
-        buttonPlanned.setOnClickListener { filterBooks(BookFilter.PLANNED) }
+        // Кнопки фильтрации
+        buttonRead.setOnClickListener {
+            filterBooks(BookFilter.FINISHED)
+            searchEditText.text.clear()
+        }
+        buttonInProcess.setOnClickListener {
+            filterBooks(BookFilter.READING)
+            searchEditText.text.clear()
+        }
+        buttonPlanned.setOnClickListener {
+            filterBooks(BookFilter.PLANNED)
+            searchEditText.text.clear()
+        }
 
+        // Кнопка добавления новой книги
         buttonAddBook.setOnClickListener {
             val intent = Intent(this, AddBookActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
+        // Показать все книги
         buttonListBooks.setOnClickListener {
             filterBooks(BookFilter.ALL)
+            searchEditText.text.clear()
             Snackbar.make(recyclerView, "Показаны все книги", Snackbar.LENGTH_SHORT).show()
         }
 
+        // Открыть статистику
         buttonStatistics.setOnClickListener {
             openStatisticsScreen()
         }
@@ -105,6 +174,7 @@ class MainActivity : AppCompatActivity() {
         currentFilter = filter
         filteredList.clear()
 
+        // Фильтрация по статусу
         when (filter) {
             BookFilter.ALL -> filteredList.addAll(bookList)
             BookFilter.FINISHED -> filteredList.addAll(bookList.filter { it.status == BookStatus.FINISHED })
@@ -112,17 +182,38 @@ class MainActivity : AppCompatActivity() {
             BookFilter.PLANNED -> filteredList.addAll(bookList.filter { it.status == BookStatus.PLANNED })
         }
 
+        // Дополнительная фильтрация по поисковому запросу
         if (searchQuery.isNotEmpty()) {
             filteredList = filteredList.filter {
-                it.title.contains(searchQuery, true) || it.author.contains(searchQuery, true)
+                it.title.contains(searchQuery, true) ||
+                        it.author.contains(searchQuery, true) ||
+                        it.summary.contains(searchQuery, true)
             }.toMutableList()
         }
 
         updateFilterButtons()
         adapter.updateList(filteredList)
+
+        // Показываем сообщение, если книг не найдено
+        if (filteredList.isEmpty()) {
+            showEmptyState()
+        } else {
+            hideEmptyState()
+        }
+    }
+
+    private fun showEmptyState() {
+        textEmptyState.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+    }
+
+    private fun hideEmptyState() {
+        textEmptyState.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
     }
 
     private fun updateFilterButtons() {
+        // Обновляем цвета кнопок фильтрации
         val selectedColor = getColor(android.R.color.holo_blue_dark)
         val normalColor = getColor(android.R.color.holo_blue_light)
 
@@ -132,6 +223,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openBookDetails(book: Book) {
+        // Открываем экран с деталями книги
         val intent = Intent(this, BookDetailsActivity::class.java).apply {
             putExtra("BOOK_ID", book.id)
         }
@@ -140,14 +232,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openStatisticsScreen() {
+        // Открываем экран статистики
         val intent = Intent(this, StatisticsActivity::class.java)
         startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 }
 
+// Перечисление для фильтров
 enum class BookFilter {
     ALL, FINISHED, READING, PLANNED
 }
-
-
