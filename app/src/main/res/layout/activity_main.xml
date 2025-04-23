@@ -10,13 +10,20 @@
         android:id="@+id/editTextSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Поиск книги"
-        android:drawableLeft="@drawable/ic_search"
-        android:drawablePadding="4dp"
-        android:layout_margin="16dp"
-        android:importantForAccessibility="yes"
-        android:contentDescription="Поле поиска книг" />
-
+        android:minHeight="48dp"
+        android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+        android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="16dp"
+    android:hint="Поиск книги"
+    android:inputType="text"
+    android:imeOptions="actionSearch"
+    android:drawableStart="@drawable/ic_search"
+    android:drawablePadding="8dp"
+    android:importantForAccessibility="yes"
+    tools:ignore="LabelFor" />
     <!-- Меню фильтров -->
     <LinearLayout
         android:id="@+id/filterMenu"
