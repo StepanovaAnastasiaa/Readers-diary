@@ -41,6 +41,14 @@ data class Book(
             return "book_${System.currentTimeMillis()}"
         }
     }
+
+    fun getProgressPercentage(): Int {
+        return if (totalPages > 0) {
+            (readPages.toFloat() / totalPages * 100).toInt()
+        } else {
+            0
+        }
+    }
 }
 
 enum class BookStatus {
