@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -56,6 +57,15 @@ class MainActivity : AppCompatActivity() {
         // Обновляем данные при возвращении на экран
         loadBooks()
     }
+    private val addBookLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            loadBooks() // Обновляем список
+        }
+    }
+
+
 
     private fun initViews() {
         // Находим все View элементы
@@ -151,10 +161,9 @@ class MainActivity : AppCompatActivity() {
             searchEditText.text.clear()
         }
 
-        // Кнопка добавления новой книги
+        // Запуск активности:
         buttonAddBook.setOnClickListener {
-            val intent = Intent(this@MainActivity, AddBookActivity::class.java)
-            startActivity(intent)
+            addBookLauncher.launch(Intent(this, AddBookActivity::class.java))
         }
     }
 

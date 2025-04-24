@@ -74,10 +74,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/btnBack"
-            android:layout_toEndOf="@id/coverContainer"
+            android:layout_alignParentEnd="true"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toEndOf="@id/coverContainer"
             android:orientation="vertical"
-            android:textColor="@android:color/darker_gray">
+            android:textColor="@android:color/black">
 
             <!-- Название книги -->
             <TextView
@@ -118,10 +120,10 @@
 
             <!-- Выпадающее меню статуса -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                android:layout_marginBottom="16dp">
 
                 <AutoCompleteTextView
                     android:id="@+id/statusDropdown"
@@ -136,14 +138,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Оценка:"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
                 <RatingBar
                     android:id="@+id/ratingBar"
@@ -151,10 +153,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:isIndicator="false"
                     android:numStars="5"
-                    android:stepSize="0.5"
                     android:rating="0"
-                    android:isIndicator="false"/>
+                    android:stepSize="0.5" />
 
                 <TextView
                     android:id="@+id/tvRatingValue"
@@ -162,27 +164,27 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="0.0"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
             </LinearLayout>
             <!-- Поле для ввода прочитанных страниц -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Прочитано:"/>
+                    android:text="Прочитано:" />
 
                 <EditText
                     android:id="@+id/etPagesRead"
                     android:layout_width="72dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:imeOptions="actionDone"
                     android:contentDescription="Введите количество прочитанных страниц"
+                    android:imeOptions="actionDone"
                     android:inputType="number" />
 
                 <!-- Кнопка сохранения с иконкой -->
@@ -191,9 +193,9 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="8dp"
-                    android:src="@drawable/ic_check"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Сохранить"
+                    android:src="@drawable/ic_check"
                     app:tint="#5081E2" />
             </LinearLayout>
         </LinearLayout>
@@ -205,7 +207,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/coverContainer"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:progress="50" />
 
         <!-- Кнопка добавления краткого содержания -->
@@ -214,6 +220,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/progressBarReading"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="#5081E2"
             android:enabled="false"
