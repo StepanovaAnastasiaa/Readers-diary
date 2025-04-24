@@ -9,7 +9,8 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomMenu"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="@android:color/white">
 
         <TextView
             android:layout_width="match_parent"
@@ -17,6 +18,7 @@
             android:text="Статистика чтения"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:textColor ="@android:color/black"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
 
@@ -33,6 +35,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="8dp"
+                android:textColor ="@android:color/black"
                 android:text="Книг: 0" />
 
             <TextView
@@ -43,6 +46,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="8dp"
+                android:textColor ="@android:color/black"
                 android:text="Страниц: 0" />
 
             <TextView
@@ -51,6 +55,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="В среднем за день: 0"
+                android:textColor ="@android:color/black"
                 android:gravity="center"
                 android:padding="8dp"/>
         </LinearLayout>
@@ -59,6 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Выберите период"
+            android:textColor ="@android:color/black"
             android:layout_marginTop="16dp"
             android:textStyle="bold"/>
 
@@ -72,6 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="С:"
+                android:textColor ="@android:color/black"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp"/>
 
@@ -90,6 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="По:"
+                android:textColor ="@android:color/black"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"/>
@@ -129,10 +137,12 @@
                 <TableRow>
                     <TextView
                         android:text="Дата"
+                        android:textColor ="@android:color/black"
                         android:padding="8dp"
                         android:textStyle="bold"/>
                     <TextView
                         android:text="Страницы"
+                        android:textColor ="@android:color/black"
                         android:padding="8dp"
                         android:textStyle="bold"/>
                 </TableRow>

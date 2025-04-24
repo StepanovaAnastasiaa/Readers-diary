@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white"> <!-- Добавлен белый фон -->
 
     <!-- Поиск -->
     <EditText
@@ -12,18 +13,20 @@
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="16dp"
-    android:hint="Поиск книги"
-    android:inputType="text"
-    android:imeOptions="actionSearch"
-    android:drawableStart="@drawable/ic_search"
-    android:drawablePadding="8dp"
-    android:importantForAccessibility="yes"
+        android:layout_marginTop="16dp"
+        android:hint="Поиск книги"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="8dp"
+        android:importantForAccessibility="yes"
+        android:background="@drawable/edittext_background"
     tools:ignore="LabelFor" />
+
     <!-- Меню фильтров -->
     <LinearLayout
         android:id="@+id/filterMenu"
@@ -32,9 +35,12 @@
         android:orientation="horizontal"
         android:layout_below="@id/editTextSearch"
         android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@android:color/white"
         android:importantForAccessibility="yes"
         android:contentDescription="Фильтры по статусу книг">
 
+        <!-- Кнопки фильтров остаются без изменений -->
         <Button
             android:id="@+id/buttonRead"
             android:layout_width="0dp"
@@ -50,7 +56,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="В процессе"
+            android:text="Читаю"
             android:backgroundTint="@android:color/holo_blue_light"
             android:textColor="@android:color/white"
             android:contentDescription="Показать книги в процессе чтения" />
@@ -60,12 +66,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Планируется"
+            android:text="В планах"
             android:backgroundTint="@android:color/holo_blue_light"
             android:textColor="@android:color/white"
             android:contentDescription="Показать запланированные книги" />
     </LinearLayout>
 
+    <!-- Пустое состояние -->
     <TextView
         android:id="@+id/textEmptyState"
         android:layout_width="wrap_content"
@@ -88,9 +95,11 @@
         android:layout_below="@id/filterMenu"
         android:padding="8dp"
         android:clipToPadding="false"
+        android:background="@android:color/white"
         android:importantForAccessibility="no"
         tools:ignore="SpeakableTextPresentCheck"
         tools:listitem="@layout/item_book" />
+
     <!-- Нижнее меню -->
     <LinearLayout
         android:id="@+id/bottomMenu"
@@ -98,7 +107,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:background="#ffffff"
+        android:background="@android:color/white"
         android:elevation="8dp"
         android:importantForAccessibility="yes"
         android:contentDescription="Нижнее меню">

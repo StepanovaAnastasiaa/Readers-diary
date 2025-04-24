@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".BookDetailsActivity">
+    tools:context=".BookDetailsActivity"
+    android:background="@android:color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -75,7 +76,8 @@
             android:layout_below="@id/btnBack"
             android:layout_toEndOf="@id/coverContainer"
             android:layout_marginStart="16dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:textColor="@android:color/darker_gray">
 
             <!-- Название книги -->
             <TextView
