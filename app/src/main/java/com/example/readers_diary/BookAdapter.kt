@@ -1,3 +1,5 @@
+package com.example.readers_diary
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -5,10 +7,8 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.readerdiary.Book
-import com.example.readerdiary.BookStatus // Убедитесь, что импортируете BookStatus
-import com.example.readers_diary.R
+import com.example.readerdiary.BookStatus
 
-@Suppress("KotlinConstantConditions")
 class BookAdapter(
     private var books: List<Book>,
     private val onItemClick: (Book) -> Unit

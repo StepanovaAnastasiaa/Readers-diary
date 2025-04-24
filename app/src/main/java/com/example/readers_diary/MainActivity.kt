@@ -1,10 +1,10 @@
 package com.example.readers_diary
 
-import BookAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         loadBooks()
         setupListeners()
+        setupBottomMenu()
     }
 
     override fun onResume() {
@@ -152,21 +153,22 @@ class MainActivity : AppCompatActivity() {
 
         // Кнопка добавления новой книги
         buttonAddBook.setOnClickListener {
-            val intent = Intent(this, AddBookActivity::class.java)
+            val intent = Intent(this@MainActivity, AddBookActivity::class.java)
             startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
+    }
 
-        // Показать все книги
+    private fun setupBottomMenu() {
+        // Кнопка "Список книг" (текущая страница)
         buttonListBooks.setOnClickListener {
-            filterBooks(BookFilter.ALL)
-            searchEditText.text.clear()
-            Snackbar.make(recyclerView, "Показаны все книги", Snackbar.LENGTH_SHORT).show()
+            // Ничего не делаем, так как мы уже на главном экране
         }
 
-        // Открыть статистику
+        // Кнопка "Статистика"
         buttonStatistics.setOnClickListener {
-            openStatisticsScreen()
+            Log.d("MainActivity", "Statistics button clicked")
+            val intent = Intent(this@MainActivity, StatisticsActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -224,18 +226,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun openBookDetails(book: Book) {
         // Открываем экран с деталями книги
-        val intent = Intent(this, BookDetailsActivity::class.java).apply {
+        val intent = Intent(this@MainActivity, BookDetailsActivity::class.java).apply {
             putExtra("BOOK_ID", book.id)
         }
         startActivity(intent)
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-    }
-
-    private fun openStatisticsScreen() {
-        // Открываем экран статистики
-        val intent = Intent(this, StatisticsActivity::class.java)
-        startActivity(intent)
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 }
 
