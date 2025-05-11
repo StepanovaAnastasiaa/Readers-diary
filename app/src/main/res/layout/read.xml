@@ -88,6 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:text="Название книги"
+                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -98,6 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="Автор: Иван Иванов"
+                android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <!-- Общее количество страниц -->
@@ -107,6 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="Всего страниц: 300"
+                android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <!-- Оставшееся количество страниц -->
@@ -116,6 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="Осталось: 150 страниц"
+                android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <!-- Выпадающее меню статуса -->
