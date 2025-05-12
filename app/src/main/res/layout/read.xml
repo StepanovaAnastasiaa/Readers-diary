@@ -130,6 +130,8 @@
                 android:layout_marginBottom="16dp">
 
                 <AutoCompleteTextView
+                    android:background="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:id="@+id/statusDropdown"
                     android:layout_width="match_parent"
                     android:layout_height="37dp"
@@ -146,12 +148,14 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:textColor="@android:color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Оценка:"
                     android:textSize="16sp" />
 
                 <RatingBar
+                    app:tint="#5081E2"
                     android:id="@+id/ratingBar"
                     style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
@@ -163,6 +167,7 @@
                     android:stepSize="0.5" />
 
                 <TextView
+                    android:textColor="@android:color/black"
                     android:id="@+id/tvRatingValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -178,25 +183,30 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:textSize="12sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Прочитано:" />
+                    android:text="Прочитано:"
+                    android:textColor="@android:color/black" />
 
                 <EditText
+
                     android:id="@+id/etPagesRead"
-                    android:layout_width="72dp"
+                    android:layout_width="36dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
                     android:contentDescription="Введите количество прочитанных страниц"
                     android:imeOptions="actionDone"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:textColor="@android:color/black" />
 
                 <!-- Кнопка сохранения с иконкой -->
                 <ImageButton
                     android:id="@+id/btnSaveProgress"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="49dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginEnd="10dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Сохранить"
                     android:src="@drawable/ic_check"
@@ -213,9 +223,9 @@
             android:layout_below="@id/coverContainer"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="20dp"
             android:progress="50" />
 
         <!-- Кнопка добавления краткого содержания -->
@@ -243,6 +253,7 @@
             android:visibility="gone">
 
             <TextView
+                android:textColor="@android:color/black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Краткое содержание:"
@@ -250,6 +261,7 @@
                 android:textStyle="bold"/>
 
             <EditText
+                android:textColor="@android:color/black"
                 android:id="@+id/etBookSummary"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"

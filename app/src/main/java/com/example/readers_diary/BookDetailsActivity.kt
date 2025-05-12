@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -15,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.readerdiary.Book
 import com.example.readerdiary.BookStatus
 import com.example.readers_diary.databinding.ReadBinding
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
@@ -47,7 +48,7 @@ class BookDetailsActivity : AppCompatActivity() {
             return
         }
 
-        currentBook = bookRepository.loadBooks().firstOrNull { it.id == bookId } ?: run {
+        currentBook = bookRepository.loadBooks().firstOrNull { it.id == bookId }?.copy() ?: run {
             finish()
             return
         }
@@ -74,10 +75,19 @@ class BookDetailsActivity : AppCompatActivity() {
 
         loadCoverImage()
 
+        // Обновляем состояние кнопки краткого содержания
+        // Инициализация состояния контейнера с кратким содержанием
         if (currentBook.summary.isNotEmpty()) {
             binding.summaryContainer.visibility = View.VISIBLE
             binding.btnAddSummary.text = "Скрыть краткое содержание"
+            binding.etBookSummary.setText(currentBook.summary)
+        } else {
+            binding.summaryContainer.visibility = View.GONE
+            binding.btnAddSummary.text = "Добавить краткое содержание"
         }
+
+        // Делаем кнопку всегда активной
+        binding.btnAddSummary.isEnabled = true
     }
 
     private fun setupStatusDropdown() {
@@ -110,9 +120,18 @@ class BookDetailsActivity : AppCompatActivity() {
             currentBook.status = BookStatus.values()[position]
             saveBook()
         }
-
+        binding.etBookSummary.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                // Автосохранение при изменении текста
+                currentBook.summary = s.toString()
+            }
+        })
         binding.btnAddSummary.setOnClickListener {
             toggleSummaryVisibility()
+            currentBook.summary = binding.etBookSummary.text.toString()
+            saveBook()
         }
 
         binding.etBookSummary.setOnFocusChangeListener { _, hasFocus ->
@@ -123,7 +142,7 @@ class BookDetailsActivity : AppCompatActivity() {
         }
 
         binding.btnBack.setOnClickListener {
-            onBackPressed()
+            saveBookAndFinish()
         }
 
         binding.btnAddCover.setOnClickListener {
@@ -135,9 +154,17 @@ class BookDetailsActivity : AppCompatActivity() {
         if (binding.summaryContainer.visibility == View.VISIBLE) {
             binding.summaryContainer.visibility = View.GONE
             binding.btnAddSummary.text = "Добавить краткое содержание"
+            // Сохраняем текст перед скрытием
+            currentBook.summary = binding.etBookSummary.text.toString()
+            saveBook()
         } else {
             binding.summaryContainer.visibility = View.VISIBLE
             binding.btnAddSummary.text = "Скрыть краткое содержание"
+            binding.etBookSummary.requestFocus()
+            // Если текст пустой, устанавливаем плейсхолдер
+            if (binding.etBookSummary.text.isNullOrEmpty()) {
+                binding.etBookSummary.hint = "Введите краткое содержание книги..."
+            }
         }
     }
 
@@ -148,48 +175,41 @@ class BookDetailsActivity : AppCompatActivity() {
 
     private fun handleSelectedImage(uri: Uri) {
         try {
-            // Store both URI and save a local copy
-            currentBook.coverImageUri = uri
+            val currentBooks = bookRepository.loadBooks().toMutableList()
+            val bookIndex = currentBooks.indexOfFirst { it.id == currentBook.id }
+            if (bookIndex == -1) return
 
             val inputStream = contentResolver.openInputStream(uri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
             inputStream?.close()
 
-            saveCoverImage(bitmap)
-
-            binding.ivBookCover.setImageBitmap(bitmap)
-            binding.ivBookCover.visibility = View.VISIBLE
-
-            saveBook()
-
-        } catch (e: Exception) {
-            Toast.makeText(this, "Ошибка при загрузке изображения", Toast.LENGTH_SHORT).show()
-            e.printStackTrace()
-        }
-    }
-
-    private fun saveCoverImage(bitmap: Bitmap) {
-        try {
-            val coversDir = File(filesDir, "book_covers")
-            if (!coversDir.exists()) {
-                coversDir.mkdirs()
+            val coversDir = File(filesDir, "book_covers").apply { mkdirs() }
+            val coverFile = File(coversDir, "${currentBook.id}.jpg")
+            FileOutputStream(coverFile).use { stream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
             }
 
-            val file = File(coversDir, "${currentBook.id}.jpg")
-            val outputStream = FileOutputStream(file)
+            currentBook.coverImageUri = uri.toString()
+            currentBook.coverImagePath = coverFile.absolutePath
 
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
-            outputStream.flush()
-            outputStream.close()
+            currentBooks[bookIndex] = currentBook
+            bookRepository.saveBooks(currentBooks)
 
-            currentBook.coverImagePath = file.absolutePath
+            runOnUiThread {
+                binding.ivBookCover.setImageBitmap(bitmap)
+                binding.ivBookCover.visibility = View.VISIBLE
+                Toast.makeText(this, "Обложка сохранена", Toast.LENGTH_SHORT).show()
+            }
+
         } catch (e: Exception) {
+            runOnUiThread {
+                Toast.makeText(this, "Ошибка при загрузке изображения", Toast.LENGTH_SHORT).show()
+            }
             e.printStackTrace()
         }
     }
 
     private fun loadCoverImage() {
-        // Try to load from local path first
         currentBook.coverImagePath?.let { path ->
             val file = File(path)
             if (file.exists()) {
@@ -200,9 +220,9 @@ class BookDetailsActivity : AppCompatActivity() {
             }
         }
 
-        // Fallback to URI if path not available
-        currentBook.coverImageUri?.let { uri ->
+        currentBook.coverImageUri?.let { uriString ->
             try {
+                val uri = Uri.parse(uriString)
                 val inputStream = contentResolver.openInputStream(uri)
                 val bitmap = BitmapFactory.decodeStream(inputStream)
                 inputStream?.close()
@@ -226,12 +246,12 @@ class BookDetailsActivity : AppCompatActivity() {
             return
         }
 
-        if (pagesRead < 0 || pagesRead > currentBook.totalPages) {
+        if (pagesRead < 0 || pagesRead > currentBook.totalPages-currentBook.readPages) {
             Toast.makeText(this, "Некорректное количество страниц", Toast.LENGTH_SHORT).show()
             return
         }
 
-        currentBook.readPages = pagesRead
+        currentBook.readPages += pagesRead
         currentBook.lastUpdated = System.currentTimeMillis()
         updateBookStatus()
         saveBook()
@@ -284,12 +304,34 @@ class BookDetailsActivity : AppCompatActivity() {
     }
 
     private fun saveBook() {
-        val books = bookRepository.loadBooks().toMutableList()
-        val index = books.indexOfFirst { it.id == currentBook.id }
-        if (index != -1) {
-            books[index] = currentBook
-            bookRepository.saveBooks(books)
+        try {
+            val books = bookRepository.loadBooks().toMutableList()
+            val index = books.indexOfFirst { it.id == currentBook.id }
+            if (index != -1) {
+                books[index] = currentBook.copy(
+                    title = currentBook.title,
+                    author = currentBook.author,
+                    totalPages = currentBook.totalPages,
+                    readPages = currentBook.readPages,
+                    status = currentBook.status,
+                    rating = currentBook.rating,
+                    summary = binding.etBookSummary.text.toString(),
+                    lastUpdated = System.currentTimeMillis(),
+                    coverImageUri = currentBook.coverImageUri,
+                    coverImagePath = currentBook.coverImagePath
+                )
+                bookRepository.saveBooks(books)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Ошибка сохранения", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
         }
+    }
+
+    private fun saveBookAndFinish() {
+        currentBook.summary = binding.etBookSummary.text.toString()
+        saveBook()
+        finish()
     }
 
     private fun updateUI() {

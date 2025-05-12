@@ -13,7 +13,7 @@ data class Book(
 
     // Обложка
     var coverImagePath: String? = null, // путь к локальному файлу
-    var coverImageUri: Uri? = null,     // URI изображения
+    var coverImageUri: String? = null,     // URI изображения
 
     // Статус и прогресс
     var status: BookStatus = BookStatus.PLANNED,

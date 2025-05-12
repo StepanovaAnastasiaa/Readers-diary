@@ -95,47 +95,47 @@ class MainActivity : AppCompatActivity() {
         bookList.addAll(bookRepository.loadBooks())
 
         // Если список пуст, добавляем примеры книг (для тестирования)
-        if (bookList.isEmpty()) {
-            bookList.addAll(getSampleBooks())
-            bookRepository.saveBooks(bookList)
-            Snackbar.make(recyclerView, "Добавлены примеры книг", Snackbar.LENGTH_SHORT).show()
-        }
+//        if (bookList.isEmpty()) {
+//            bookList.addAll(getSampleBooks())
+//            bookRepository.saveBooks(bookList)
+//            Snackbar.make(recyclerView, "Добавлены примеры книг", Snackbar.LENGTH_SHORT).show()
+//        }
 
         filterBooks(currentFilter)
     }
 
-    private fun getSampleBooks(): List<Book> {
-        // Создаем несколько книг для примера
-        return listOf(
-            Book(
-                title = "Война и мир",
-                author = "Лев Толстой",
-                totalPages = 1225,
-                readPages = 300,
-                status = BookStatus.READING,
-                rating = 4.5f,
-                summary = "Роман-эпопея о русском обществе во время войн с Наполеоном"
-            ),
-            Book(
-                title = "1984",
-                author = "Джордж Оруэлл",
-                totalPages = 328,
-                readPages = 328,
-                status = BookStatus.FINISHED,
-                rating = 5f,
-                summary = "Классическая антиутопия о тоталитарном обществе"
-            ),
-            Book(
-                title = "Гарри Поттер и философский камень",
-                author = "Дж. К. Роулинг",
-                totalPages = 400,
-                readPages = 0,
-                status = BookStatus.PLANNED,
-                rating = 0f,
-                summary = "Первая книга о юном волшебнике Гарри Поттере"
-            )
-        )
-    }
+//    private fun getSampleBooks(): List<Book> {
+//        // Создаем несколько книг для примера
+//        return listOf(
+//            Book(
+//                title = "Война и мир",
+//                author = "Лев Толстой",
+//                totalPages = 1225,
+//                readPages = 300,
+//                status = BookStatus.READING,
+//                rating = 4.5f,
+//                summary = "Роман-эпопея о русском обществе во время войн с Наполеоном"
+//            ),
+//            Book(
+//                title = "1984",
+//                author = "Джордж Оруэлл",
+//                totalPages = 328,
+//                readPages = 328,
+//                status = BookStatus.FINISHED,
+//                rating = 5f,
+//                summary = "Классическая антиутопия о тоталитарном обществе"
+//            ),
+//            Book(
+//                title = "Гарри Поттер и философский камень",
+//                author = "Дж. К. Роулинг",
+//                totalPages = 400,
+//                readPages = 0,
+//                status = BookStatus.PLANNED,
+//                rating = 0f,
+//                summary = "Первая книга о юном волшебнике Гарри Поттере"
+//            )
+//        )
+//    }
 
     private fun setupListeners() {
         // Поиск книг при изменении текста
@@ -170,7 +170,10 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomMenu() {
         // Кнопка "Список книг" (текущая страница)
         buttonListBooks.setOnClickListener {
-            // Ничего не делаем, так как мы уже на главном экране
+            // Сбрасываем фильтры и поиск
+            currentFilter = BookFilter.ALL
+            searchEditText.text.clear()
+            filterBooks(currentFilter)
         }
 
         // Кнопка "Статистика"
