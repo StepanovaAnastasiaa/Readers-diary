@@ -1,10 +1,12 @@
 package com.example.readers_diary
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TableLayout
+import android.widget.TableRow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.readerdiary.Book
@@ -14,7 +16,7 @@ import java.util.Date
 import java.util.Locale
 
 class StatisticsActivity : AppCompatActivity() {
-    // UI элементы
+
     private lateinit var totalBooksTextView: TextView
     private lateinit var totalPagesTextView: TextView
     private lateinit var averagePagesTextView: TextView
@@ -22,31 +24,26 @@ class StatisticsActivity : AppCompatActivity() {
     private lateinit var endDateEditText: EditText
     private lateinit var searchButton: Button
     private lateinit var statisticsTableLayout: TableLayout
-
-    // Репозиторий для работы с книгами
     private lateinit var bookRepository: BookRepository
 
-    // Календарь для выбора дат
     private val calendar = Calendar.getInstance()
+    private val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_statistics)
 
-        // Инициализация репозитория
         bookRepository = BookRepositoryImpl(this)
-
-        // Инициализация UI элементов
         initViews()
-
-        // Настройка слушателей
         setupListeners()
-
-        // Загрузка общей статистики
-        loadOverallStatistics()
-
-        // Настройка нижнего меню
+        loadStatistics()
         setupBottomMenu()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Обновляем статистику при возвращении на экран
+        loadStatistics()
     }
 
     private fun initViews() {
@@ -60,133 +57,117 @@ class StatisticsActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        // Установка слушателей для выбора дат
         startDateEditText.setOnClickListener { showDatePickerDialog(true) }
         endDateEditText.setOnClickListener { showDatePickerDialog(false) }
-
-        // Слушатель для кнопки поиска
-        searchButton.setOnClickListener { searchStatistics() }
+        searchButton.setOnClickListener { loadStatistics() }
     }
 
     private fun showDatePickerDialog(isStartDate: Boolean) {
-        val datePickerDialog = android.app.DatePickerDialog(
+        DatePickerDialog(
             this,
-            { _, year, monthOfYear, dayOfMonth ->
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, monthOfYear)
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+            { _, year, month, day ->
+                calendar.set(year, month, day)
                 if (isStartDate) {
-                    startDateEditText.setText(sdf.format(calendar.time))
+                    startDateEditText.setText(dateFormat.format(calendar.time))
                 } else {
-                    endDateEditText.setText(sdf.format(calendar.time))
+                    endDateEditText.setText(dateFormat.format(calendar.time))
                 }
+                loadStatistics() // Автоматически обновляем статистику при выборе даты
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        datePickerDialog.show()
+        ).show()
     }
 
-    private fun loadOverallStatistics() {
-        val books = bookRepository.loadBooks()
+    private fun loadStatistics() {
+        val books = if (startDateEditText.text.isNotEmpty() && endDateEditText.text.isNotEmpty()) {
+            val startDate = dateFormat.parse(startDateEditText.text.toString())
+            val endDate = dateFormat.parse(endDateEditText.text.toString())
 
-        // Общее количество книг
+            if (startDate != null && endDate != null) {
+                bookRepository.loadBooks().filter {
+                    it.addedDate in startDate.time..endDate.time
+                }
+            } else {
+                bookRepository.loadBooks()
+            }
+        } else {
+            bookRepository.loadBooks()
+        }
+
+        updateStatistics(books)
+    }
+
+    private fun updateStatistics(books: List<Book>) {
+        // Общая статистика
         val totalBooks = books.size
-        totalBooksTextView.text = "Книг: $totalBooks"
-
-        // Общее количество прочитанных страниц
         val totalPages = books.sumOf { it.readPages }
+
+        // Рассчитываем количество дней чтения
+        val readingDays = calculateReadingDays(books)
+        val averagePagesPerDay = if (readingDays > 0) totalPages / readingDays else 0
+
+        totalBooksTextView.text = "Книг: $totalBooks"
         totalPagesTextView.text = "Страниц: $totalPages"
+        averagePagesTextView.text = "Средне в день: $averagePagesPerDay"
 
-        // Средние страницы в день (примерная оценка)
-        val averagePages = if (totalBooks > 0) totalPages / totalBooks else 0
-        averagePagesTextView.text = "В среднем за день: $averagePages"
-
-        // Обновляем таблицу статистики по всем книгам
+        // Статистика по дням
         updateStatisticsTable(books)
     }
 
-    private fun searchStatistics() {
-        val startDateStr = startDateEditText.text.toString()
-        val endDateStr = endDateEditText.text.toString()
+    private fun calculateReadingDays(books: List<Book>): Int {
+        if (books.isEmpty()) return 0
 
-        if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
-            // Если даты не выбраны, показываем общую статистику
-            loadOverallStatistics()
-            return
-        }
+        // Находим самую раннюю и позднюю даты чтения
+        val minDate = books.minOf { it.addedDate }
+        val maxDate = books.maxOf { it.addedDate }
 
-        val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        val startDate = sdf.parse(startDateStr)
-        val endDate = sdf.parse(endDateStr)
-
-        if (startDate != null && endDate != null) {
-            // Фильтрация книг по датам
-            val books = bookRepository.loadBooks()
-                .filter { book ->
-                    book.addedDate in startDate.time..endDate.time
-                }
-
-            updateStatisticsTable(books)
-        }
+        // Вычисляем разницу в днях
+        return ((maxDate - minDate) / (1000 * 60 * 60 * 24)).toInt() + 1
     }
 
     private fun updateStatisticsTable(books: List<Book>) {
-        // Очистка таблицы (оставляем только заголовок)
+        // Очищаем таблицу, кроме заголовков
         while (statisticsTableLayout.childCount > 1) {
             statisticsTableLayout.removeViewAt(1)
         }
 
-        // Группировка книг по дням
+        // Группируем книги по датам
         val booksByDate = books.groupBy {
-            SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(it.addedDate))
+            dateFormat.format(Date(it.addedDate))
         }
 
-        // Сортировка дат
-        val sortedDates = booksByDate.keys.sortedBy {
-            SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(it)
-        }
+        // Сортируем даты
+        booksByDate.keys.sortedBy { dateFormat.parse(it)?.time ?: 0 }.forEach { date ->
+            val dayBooks = booksByDate[date] ?: return@forEach
+            val totalDayPages = dayBooks.sumOf { it.readPages }
 
-        // Добавление данных о книгах в таблицу
-        for (date in sortedDates)
-        // Добавление данных о книгах в таблицу
-            for (date in sortedDates) {
-                val dayBooks = booksByDate[date] ?: continue
-                val totalDayPages = dayBooks.sumOf { it.readPages }
-
-                val tableRow = android.widget.TableRow(this)
-
-                val dateTextView = android.widget.TextView(this).apply {
+            val tableRow = TableRow(this).apply {
+                addView(TextView(this@StatisticsActivity).apply {
                     text = date
+                    setTextColor(resources.getColor(android.R.color.black))
                     setPadding(8, 8, 8, 8)
-                }
-
-                val pagesTextView = android.widget.TextView(this).apply {
+                })
+                addView(TextView(this@StatisticsActivity).apply {
                     text = totalDayPages.toString()
+                    setTextColor(resources.getColor(android.R.color.black))
                     setPadding(8, 8, 8, 8)
-                }
-
-                tableRow.addView(dateTextView)
-                tableRow.addView(pagesTextView)
-
-                statisticsTableLayout.addView(tableRow)
+                })
             }
+
+            statisticsTableLayout.addView(tableRow)
+        }
     }
 
     private fun setupBottomMenu() {
-        // Кнопка "Список книг"
         findViewById<Button>(R.id.buttonListBooks).setOnClickListener {
-            val intent = Intent(this@StatisticsActivity, MainActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
-
-        // Кнопка "Статистика" (текущая страница)
         findViewById<Button>(R.id.buttonStatistics).setOnClickListener {
-            // Ничего не делаем, так как мы уже на странице статистики
+            // Обновляем статистику при повторном нажатии
+            loadStatistics()
         }
     }
 }

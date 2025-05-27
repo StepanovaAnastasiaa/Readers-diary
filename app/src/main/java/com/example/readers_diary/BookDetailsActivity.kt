@@ -19,6 +19,7 @@ import com.example.readerdiary.BookStatus
 import com.example.readers_diary.databinding.ReadBinding
 import java.io.File
 import java.io.FileOutputStream
+import androidx.appcompat.app.AlertDialog
 
 class BookDetailsActivity : AppCompatActivity() {
 
@@ -97,6 +98,37 @@ class BookDetailsActivity : AppCompatActivity() {
         binding.statusDropdown.setText(getStatusDisplayName(currentBook.status), false)
     }
 
+    private fun deleteBook() {
+        try {
+            val books = bookRepository.loadBooks().toMutableList()
+            books.removeAll { it.id == currentBook.id }
+            bookRepository.saveBooks(books)
+
+            // Delete cover image if exists
+            currentBook.coverImagePath?.let { path ->
+                File(path).delete()
+            }
+
+            Toast.makeText(this, "Книга удалена", Toast.LENGTH_SHORT).show()
+            finish()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Ошибка при удалении книги", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Удаление книги")
+            .setMessage("Вы уверены, что хотите удалить эту книгу? Это действие нельзя отменить.")
+            .setPositiveButton("Удалить") { _, _ ->
+                deleteBook()
+            }
+            .setNegativeButton("Отмена", null)
+            .create()
+            .show()
+    }
+
     private fun getStatusDisplayName(status: BookStatus): String {
         return when (status) {
             BookStatus.PLANNED -> "В планах"
@@ -108,6 +140,9 @@ class BookDetailsActivity : AppCompatActivity() {
     private fun setupListeners() {
         binding.btnSaveProgress.setOnClickListener {
             saveReadingProgress()
+        }
+        binding.btnDeleteBook.setOnClickListener {
+            showDeleteConfirmationDialog()
         }
 
         binding.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
